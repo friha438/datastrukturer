@@ -1,0 +1,4 @@
+﻿  lab1.cpp
+C:\Users\hartm\source\repos\TND004\Labb1\Code1\lab1.cpp(187,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\hartm\source\repos\TND004\Labb1\Code1\lab1.cpp(196,37): warning C4018: '<': signed/unsigned mismatch
+  LABB1.vcxproj -> C:\Users\hartm\source\repos\TND004\LABB1_REAL\LABB1\Debug\LABB1.exe
