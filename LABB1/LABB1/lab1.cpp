@@ -132,7 +132,7 @@ int main() {
     {
         std::cout << "\n\nTEST PHASE 6: test with long sequence loaded from a file\n\n";
 
-        std::ifstream file("../../test_data.txt");
+        std::ifstream file("test_data.txt");
 
         if (!file) {
             std::cout << "Could not open test_data.txt!!\n";
@@ -149,7 +149,7 @@ int main() {
         // std::for_each(std::begin(seq), std::end(seq), Formatter<int>(std::cout, 8, 5));
 
         // read the result sequence from file
-        file.open("../../test6_res.txt");
+        file.open("test6_res.txt");
 
         if (!file) {
             std::cout << "Could not open test6_res.txt!!\n";
@@ -182,30 +182,37 @@ bool even(int i) {
 // Iterative algorithm
 void TND004::stable_partition_iterative(std::vector<int>& V, std::function<bool(int)> p) {
 
-    
+    std::vector<int>odd;
+    std::vector<int>eve;
 
-    for (int i = 1; i < V.size(); i++)
+    int counter = 0;
+
+    for (int i = 0; i < V.size(); i++)
+    {     
+        if (even(V[i]))
+        {
+            eve.push_back(V[i]);
+        }
+        else
+        {   
+            odd.push_back(V[i]);     
+        }    
+    }
+
+    std::cout << "Sequence: ";
+  
+    for (int i = 0; i < eve.size(); i++)
     {
-        if (V.size() <= 1) break;
+        V[i] = eve[i];
+        counter++;
+        std::cout << V[i] << " ";
+    }
 
-        int next_value = V[i];
-        int j = i-1;
-        int next = i;
-        std::cout << "i" << V[i];
-
-            for (j = 0; j >= 0 && j < V.size() - 1; j++)
-            {
-        
-                if (even(V[next]) && !even(V[j]))
-                {
-                    V[next] = V[j];
-                    V[j] = next_value;
-
-                }
-                next++;
-                std::cout << "j" << V[j];
-            }
-            
+    for (int i = 0; i < odd.size(); i++)
+    {
+        V[counter] = odd[i];
+        std::cout << V[counter] << " ";
+        counter++;
     }
 }
 
