@@ -1,6 +1,9 @@
 // lab1.cpp : stable partition
 // Iterative and divide-and-conquer
 
+// Frida Hartman, friha438
+// Moa Gutenwik, moagu002
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -56,6 +59,7 @@ bool even(int i);
  *****************************************/
 
 int main() {
+
     /*****************************************************
      * TEST PHASE 1                                       *
      ******************************************************/
@@ -146,7 +150,7 @@ int main() {
         std::cout << "Number of items in the sequence: " << seq.size() << '\n';
 
         // display sequence
-        // std::for_each(std::begin(seq), std::end(seq), Formatter<int>(std::cout, 8, 5));
+         std::for_each(std::begin(seq), std::end(seq), Formatter<int>(std::cout, 8, 5));
 
         // read the result sequence from file
         file.open("test6_res.txt");
@@ -161,7 +165,7 @@ int main() {
         std::cout << "\nNumber of items in the result sequence: " << res.size() << '\n';
 
         // display sequence
-        // std::for_each(std::begin(res), std::end(res), Formatter<int>(std::cout, 8, 5));
+         std::for_each(std::begin(res), std::end(res), Formatter<int>(std::cout, 8, 5));
 
         assert(seq.size() == res.size());
 
@@ -182,39 +186,46 @@ bool even(int i) {
 // Iterative algorithm
 void TND004::stable_partition_iterative(std::vector<int>& V, std::function<bool(int)> p) {
 
-    std::vector<int>odd;
-    std::vector<int>eve;
+    std::vector<int>odd(V.size());
+    std::vector<int>eve(V.size());
 
-    int counter = 0;
+    int counter = 0;                        //init (1)
+    int counterOdd = 0;
+    int counterEve = 0;
 
-    for (int i = 0; i < V.size(); i++)
-    {     
-        if (even(V[i]))
+    for (int i = 0; i < V.size(); i++)      //function call (1) index init (1) jmfr (1) increment (1) ====== 4xn
+    {
+        if (p(V[i]))                        //func call (1) array slot (1) ==== 2
         {
-            eve.push_back(V[i]);
+            eve[counterEve] = V[i];
+            counterEve++;
+           // eve.push_back(V[i]);            //func call (1) array slot (1) ==== 2
         }
         else
-        {   
-            odd.push_back(V[i]);     
-        }    
+        {
+            odd[counterOdd] = V[i];
+            counterOdd++;
+            //odd.push_back(V[i]);            //func call (1) array slot (1) ==== 2
+        }
     }
 
     std::cout << "Sequence: ";
-  
-    for (int i = 0; i < eve.size(); i++)
+
+    for (int i = 0; i < eve.size(); i++)    // (4) ===== 4x(n/2)
     {
-        V[i] = eve[i];
-        counter++;
-        std::cout << V[i] << " ";
+        V[i] = eve[i];                      // (2)
+        counter++;                          // (1)
+        std::cout << V[i] << " ";           // (1)
     }
 
-    for (int i = 0; i < odd.size(); i++)
+    for (int i = 0; i < odd.size(); i++)    // (4) ===== 4x(n/2)
     {
-        V[counter] = odd[i];
-        std::cout << V[counter] << " ";
-        counter++;
+        V[counter] = odd[i];                // (2)
+        std::cout << V[counter] << " ";     // (1)
+        counter++;                          // (1)
     }
 }
+
 
 // Auxiliary function that performs the stable partition recursivelly
 namespace TND004 {
@@ -224,9 +235,20 @@ namespace TND004 {
 std::vector<int>::iterator stable_partition(std::vector<int>& V, std::vector<int>::iterator first,
                                             std::vector<int>::iterator last,
                                             std::function<bool(int)> p) {
-    // ADD CODE
+   
+    std::vector<int>::iterator mid = first + (last - first) / 2;    // (1)
 
-    return first;  // delete this line
+    //base case
+    if ((last-first) == 1)                                          // (2)        
+    {
+        if (p(*first)) return last;                                 // (2)
+        else return first;                                          // (2)
+    }
+
+    return std::rotate(stable_partition(V, first, mid, p),          // function call (1) recursive function (?)
+                        mid,                                        
+                        stable_partition(V, mid, last, p));         // recursive function (?)
+
 }
 }  // namespace TND004
 
@@ -239,11 +261,21 @@ void TND004::stable_partition(std::vector<int>& V, std::function<bool(int)> p) {
 void execute(std::vector<int>& V, const std::vector<int>& res) {
     std::vector<int> _copy{V};
 
-    std::cout << "\n\nIterative stable partition\n";
-    TND004::stable_partition_iterative(V, even);
-    assert(V == res);  // compare with the expected result
+    //std::cout << "\n\nIterative stable partition\n";
+    //TND004::stable_partition_iterative(V, even);
+    //assert(V == res);  // compare with the expected result
 
-    // std::cout << "Divide-and-conquer stable partition\n";
-    // TND004::stable_partition(_copy, even);
-    // assert(_copy == res);  // compare with the expected result
+     std::cout << "Divide-and-conquer stable partition\n";
+     TND004::stable_partition(_copy, even);
+     assert(_copy == res);  // compare with the expected result
+
+
+     std::cout << "Resulting sequence: ";
+     for (int i = 0; i < _copy.size(); i++) {
+         std::cout << _copy[i] << " ";
+     }
+     std::cout << std::endl;
+
 }
+
+
