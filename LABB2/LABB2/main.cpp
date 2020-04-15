@@ -17,20 +17,20 @@ int main() {
     {
         Set S1{};
         assert(Set::get_count_nodes() == 2);
-        //std::cout << "success!";
+        
 
         Set S2{-4};
         assert(Set::get_count_nodes() == 5);
-        //std::cout << "success!";
         
+        //std::cout << S2;
+
         // Test
         std::ostringstream os{};
-        os << S1;
-        //std::cout << "success!";
-
+        os << S1;       
+        std::cout << "success";
         std::string tmp{os.str()};
         assert((tmp == std::string{"Set is empty!"}));
-        //std::cout << "success!";
+        
     }
 
     assert(Set::get_count_nodes() == 0);
@@ -38,7 +38,7 @@ int main() {
     /*****************************************************
      * TEST PHASE 1                                       *
      * Constructor: create a Set from a sorted vector     *
-     ******************************************************
+     ******************************************************/
     std::cout << "\nTEST PHASE 1: constructor from a vector\n";
 
     {
@@ -47,16 +47,23 @@ int main() {
 
         Set S1{A1};
         assert(Set::get_count_nodes() == 5);
+        std::cout << "success!";
 
+       // std::cout << Set::get_count_nodes();
+        //std::cout << S1;
         Set S2{A2};
         assert(Set::get_count_nodes() == 10);
-
+        std::cout << "success!";
+        
         // Test
         std::ostringstream os{};
         os << S1 << " " << S2;
+        std::cout << "success!";
+        
 
         std::string tmp{os.str()};
         assert((tmp == std::string{"{ 1 3 5 } { 2 3 4 }"}));
+        std::cout << "success!";
     }
 
     assert(Set::get_count_nodes() == 0);
@@ -69,21 +76,26 @@ int main() {
 
     {
         std::vector<int> A1{1, 3, 5};
+        std::cout << "success!";
 
         Set S1{A1};
         Set S2{S1};
 
         assert(Set::get_count_nodes() == 10);
+        std::cout << "success!";
 
         // Test
         std::ostringstream os{};
         os << S2;
+        std::cout << "success!";
 
         std::string tmp{os.str()};
         assert((tmp == std::string{"{ 1 3 5 }"}));
+        std::cout << "success!";
     }
 
     assert(Set::get_count_nodes() == 0);
+    std::cout << "success!";
 
     /*****************************************************
      * TEST PHASE 3                                       *

@@ -14,8 +14,10 @@ int Set::get_count_nodes() {
 }
 
 // Default constructor
-Set::Set() : counter{0}, head { new Node(0, nullptr) }, tail{ new Node(0, nullptr) }
+Set::Set() : counter{0}, tail{ new Node(0, nullptr) }, head { new Node(0, tail) }
 {
+    head->prev = nullptr;
+    tail->prev = head;
     // IMPLEMENT before HA session on week 16
 }
 
@@ -23,7 +25,12 @@ Set::Set() : counter{0}, head { new Node(0, nullptr) }, tail{ new Node(0, nullpt
 Set::Set(int n)
     : Set{}  // create an empty list
 {
-    tail->next = new Node(n, nullptr);
+    Node* temp = new Node(n, tail);
+    //head->next = new Node(n, nullptr);
+    head->next = temp;
+    tail->prev = temp;
+    temp->prev = head;
+    counter++;
     // IMPLEMENT before HA session on week 16
 }
 
@@ -31,22 +38,54 @@ Set::Set(int n)
 Set::Set(const std::vector<int>& v)
     : Set{}  // create an empty list
 {
+
     for (int i = 0; i < v.size(); i++)
     {
+        counter++;
         Node* temp = new Node(v[i], nullptr);
-        tail->next = temp;
-        tail = temp->next;
+        head->next = temp;
+        head = head->next;
     }
+
+
+
+    /*
+    Node* temp = head;
+
+    for (int i = 0; i < n; ++i) {
+        Node* newo = new Node(boi[i], nullptr);
+        temp->next = newo;
+        temp = temp->next;
+    }*/
     // IMPLEMENT before HA session on week 16
 }
 
 // Make the set empty
 void Set::make_empty() {
-    Set::Set();
+
+    Node* current = head;
+
+    while (current != nullptr)
+    {
+        Node* temp = current;
+        current = current->next;
+        temp->next = nullptr;
+        delete temp;
+        head = current;
+    }
+    current = nullptr;
+
+
     // IMPLEMENT before HA session on week 16
 }
 
 Set::~Set() {
+
+    Set::make_empty();
+    
+    delete head;
+    delete tail;
+    counter = 0;
 
     // Member function make_empty() can be used to implement the destructor
     // IMPLEMENT before HA session on week 16
@@ -56,6 +95,23 @@ Set::~Set() {
 Set::Set(const Set& source)
     : Set{}  // create an empty list
 {
+    Node* temp = source.head->next;
+    Node* p = head;
+
+    /*head->next = new Node(temp->value, nullptr);
+    temp = temp->next;
+    head->next->next = new Node(temp->value, nullptr);
+    */
+
+    while (temp != nullptr) {
+        p->next = new Node(temp->value, nullptr);
+        p = p->next;
+        temp = temp->next;
+        counter++;
+    }
+
+
+
     // IMPLEMENT before HA session on week 16
 }
 
