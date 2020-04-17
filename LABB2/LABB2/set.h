@@ -176,6 +176,8 @@ private:
 
     void remove(Node* temp);
 
+    void insert(Node* temp);
+
     /* ***************************** *
      * Overloaded Global Operators   *
      * ***************************** */

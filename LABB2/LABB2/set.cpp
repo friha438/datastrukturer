@@ -13,16 +13,7 @@ int Set::get_count_nodes() {
     return Set::Node::count_nodes;
 }
 
-void Set::remove(Node* temp)
-{
-    temp->prev->next = temp->next;
 
-    temp->next->prev = temp->prev;
-   
-    counter--;
-    delete temp;
-
-}
 
 // Default constructor
 Set::Set() : head{ new Node(0, nullptr, nullptr) }, tail{ new Node(0, nullptr, head) }, counter{ 0 } 
@@ -35,10 +26,7 @@ Set::Set(int n)
     : Set{}  // create an empty list
 {
     Node* newNode = new Node(n, tail, head); 
-
-    tail->prev = newNode;
-    head->next = newNode;
-    counter++;
+    insert(newNode);
 }
 
 // Constructor to create a Set from a sorted vector v
@@ -47,14 +35,10 @@ Set::Set(const std::vector<int>& v)
 {
 
     for (int i = 0; i < v.size(); i++)
-    {
-        
+    {       
         Node* temp = new Node(v[i], tail, tail->prev);
-        tail->prev->next = temp;
-        tail->prev = temp;
+        insert(temp);
         
-        
-        counter++;
     }
 }
 
@@ -67,7 +51,6 @@ void Set::make_empty() {
     while (current != tail)
     {
         Node* temp = current;
-
         current = current->next;
         delete temp;
         
@@ -102,11 +85,8 @@ Set::Set(const Set& source)
        // p->next = new Node(temp->value, tail, tail->prev);
 
         Node* p = new Node(temp->value, tail, tail->prev);
-        tail->prev->next = p;
-        tail->prev = p;
+        insert(p);
         temp = temp->next;
-
-        counter++;
     }
 
 }
@@ -169,8 +149,6 @@ bool Set::operator<=(const Set& b) const {
         }
         else if (p1->value < p2->value)
         {
-            //p2 = p2->next;
-            //p1 = p1->next;
             return false;
         }
 
@@ -203,8 +181,8 @@ bool Set::operator!=(const Set& b) const {
 // a == b, iff a <= b but not b <= a
 bool Set::operator<(const Set& b) const {
 
-        if(b.operator<=(*this) && !b.operator==(*this)) return true;
-        else return false;
+    if(b.operator<=(*this) && !b.operator==(*this)) return true;
+    else return false;
 
 }
 
@@ -215,7 +193,7 @@ Set& Set::operator+=(const Set& S) {
     Node* pointS = S.head->next;
     Node* t = head->next;
     
-    // Merge S1 with S2
+    // Union of this and S
     while (t != (*this).tail && pointS != S.tail) {
         if (t->value < pointS->value) {
             t = t->next;          
@@ -227,7 +205,7 @@ Set& Set::operator+=(const Set& S) {
             pointS = pointS->next;
             
         }
-        else  // S1[count1] == S2[count2]
+        else  // t->value == pointS->value
         {
             t = t->next;
             pointS = pointS->next;
@@ -235,7 +213,7 @@ Set& Set::operator+=(const Set& S) {
         }
     }
 
-    // copy any remaining values from S2 to S3
+    // copy any remaining values from S to this
     while (pointS != S.tail) {
         Node* p = new Node(pointS->value, t, t->prev);
         t->prev = t->prev->next = p;
@@ -248,29 +226,34 @@ Set& Set::operator+=(const Set& S) {
 
 // Modify *this such that it becomes the intersection of *this with Set S
 Set& Set::operator*=(const Set& S) {
-    // IMPLEMENT
+
     Node* pointS = S.head->next;
     Node* t = head->next;
 
 
     while (t != (*this).tail && pointS != S.tail) {
         if (t->value < pointS->value) {
-            t = t->next;
-
-        }
-        else if (pointS->value < t->value) {
-            //Node* p = new Node(pointS->value, t, t->prev);
-            //t->prev = t->prev->next = p;
-            pointS = pointS->next;
-
-        }
-        else  // S1[count1] == S2[count2]
-        {
             Node* p = t;
             t = t->next;
-            pointS = pointS->next;
             remove(p);
+            
         }
+        else if (pointS->value < t->value) {
+            pointS = pointS->next;
+
+        }
+        else  // pointS->value == t->value
+        {
+            t = t->next;
+            pointS = pointS->next;
+
+        }
+    }
+
+    while (t != tail) {
+        Node* p = t;
+        t = t->next;
+        remove(p);
     }
 
     return *this;
@@ -289,12 +272,10 @@ Set& Set::operator-=(const Set& S) {
 
         }
         else if (pointS->value < t->value) {
-            //Node* p = new Node(pointS->value, t, t->prev);
-            //t->prev = t->prev->next = p;
             pointS = pointS->next;
 
         }
-        else  // S1[count1] == S2[count2]
+        else  // pointS->value == t->value
         {
             Node* p = t;
             t = t->next;
@@ -331,71 +312,20 @@ std::ostream& operator<<(std::ostream& os, const Set& b) {
 
 //If you add any private member functions to class Set then write the implementation here
 
-/*
-    Set R{ };
-    Node* pointS = S.head->next;
-    Node* p = R.head->next;
-    Node* t = head->next;
+void Set::remove(Node* temp)
+{
+    temp->prev->next = temp->next;
+    temp->next->prev = temp->prev;
 
-    // Merge S1 with S2
-    while (t != (*this).tail && pointS != S.tail) {
-        if (t->value < pointS->value) {
-            //std::cout << t->value << std::endl;
-            p = new Node(t->value, tail, tail->prev);
-            p->next = p->next->prev;
-            p->prev = p->next;
-            std::cout << p->value << std::endl;
-            t = t->next;
-            p = p->next;
+    counter--;
+    delete temp;
 
-        }
-        else if (pointS->value < t->value) {
-            //std::cout << pointS->value << std::endl;
-            p = new Node(pointS->value, tail, tail->prev);
-            p->next = p->next->prev;
-            p->prev = p->next;
-            std::cout << p->value << std::endl;
-            p = p->next;
-            pointS = pointS->next;
+}
 
-        }
-        else  // S1[count1] == S2[count2]
-        {
-            //std::cout << t->value << std::endl;
-            p = new Node(t->value, tail, tail->prev);
-            p->next = p->next->prev;
-            p->prev = p->next;
-            std::cout << p->value << std::endl;
-            p = p->next;
-            t = t->next;
-            pointS = pointS->next;
+void Set::insert(Node* temp)
+{
+    tail->prev->next = temp;
+    tail->prev = temp;
 
-        }
-    }
-
-    // copy any remaining values from S1 to S3
-    while (t != (*this).tail) {
-        //std::cout << t->value << std::endl;
-        p = new Node(t->value, tail, tail->prev);
-        p->next = p->next->prev;
-        p->prev = p->next;
-        std::cout << p->value << std::endl;
-        t = t->next;
-        p = p->next;
-
-    }
-
-    // copy any remaining values from S2 to S3
-    while (pointS != S.tail) {
-        //std::cout << pointS->value << std::endl;
-        p = new Node(pointS->value, tail, tail->prev);
-        p->next = p->next->prev;
-        p->prev = p->next;
-        std::cout << p->value << std::endl;
-        p = p->next;
-        pointS = pointS->next;
-
-    }
-
-    return R;
-*/
+    counter++;
+}
