@@ -174,6 +174,8 @@ private:
     Node* tail;      // Pointer to the dummy tail Node
     size_t counter;  // number of values in the Set
 
+    void remove(Node* temp);
+
     /* ***************************** *
      * Overloaded Global Operators   *
      * ***************************** */

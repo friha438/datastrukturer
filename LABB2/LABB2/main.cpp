@@ -18,21 +18,19 @@ int main() {
         Set S1{};
         assert(Set::get_count_nodes() == 2);
         
-
         Set S2{-4};
-        assert(Set::get_count_nodes() == 5);
-        
-        //std::cout << S2;
+        assert(Set::get_count_nodes() == 5);       
 
-        // Test
+        std::cout << S2;
+
         std::ostringstream os{};
         os << S1;       
-        std::cout << "success";
+
         std::string tmp{os.str()};
         assert((tmp == std::string{"Set is empty!"}));
-        
+     
     }
-
+    std::cout << Set::get_count_nodes() << std::endl;
     assert(Set::get_count_nodes() == 0);
 
     /*****************************************************
@@ -47,23 +45,19 @@ int main() {
 
         Set S1{A1};
         assert(Set::get_count_nodes() == 5);
-        std::cout << "success!";
 
        // std::cout << Set::get_count_nodes();
         //std::cout << S1;
         Set S2{A2};
         assert(Set::get_count_nodes() == 10);
-        std::cout << "success!";
         
         // Test
         std::ostringstream os{};
         os << S1 << " " << S2;
-        std::cout << "success!";
         
 
         std::string tmp{os.str()};
         assert((tmp == std::string{"{ 1 3 5 } { 2 3 4 }"}));
-        std::cout << "success!";
     }
 
     assert(Set::get_count_nodes() == 0);
@@ -71,36 +65,31 @@ int main() {
     /*****************************************************
      * TEST PHASE 2                                       *
      * Copy constructor                                   *
-     ******************************************************
+     ******************************************************/
     std::cout << "\nTEST PHASE 2: copy constructor\n";
 
     {
         std::vector<int> A1{1, 3, 5};
-        std::cout << "success!";
 
         Set S1{A1};
         Set S2{S1};
 
         assert(Set::get_count_nodes() == 10);
-        std::cout << "success!";
 
         // Test
         std::ostringstream os{};
         os << S2;
-        std::cout << "success!";
 
         std::string tmp{os.str()};
         assert((tmp == std::string{"{ 1 3 5 }"}));
-        std::cout << "success!";
     }
 
     assert(Set::get_count_nodes() == 0);
-    std::cout << "success!";
 
     /*****************************************************
      * TEST PHASE 3                                       *
      * Assignment operator: operator=                     *
-     ******************************************************
+     ******************************************************/
     std::cout << "\nTEST PHASE 3: operator=\n";
 
     {
@@ -131,7 +120,7 @@ int main() {
     /*****************************************************
      * TEST PHASE 4                                       *
      * is_member                                          *
-     ******************************************************
+     ******************************************************/
     std::cout << "\nTEST PHASE 4: is_member\n";
 
     {
@@ -151,7 +140,7 @@ int main() {
     /*****************************************************
      * TEST PHASE 5                                       *
      * cardinality, make_empty                            *
-     ******************************************************
+     ******************************************************/
     std::cout << "\nTEST PHASE 5: cardinality and make_empty\n";
 
     {
@@ -172,7 +161,7 @@ int main() {
      * TEST PHASE 6                                       *
      * Overloaded operators: equality, subset, and        *
      * strict subset                                      *
-     ******************************************************
+     ******************************************************/
     std::cout << "\nTEST PHASE 6: equality, subset, strict subset\n";
 
     {
@@ -195,7 +184,7 @@ int main() {
      * TEST PHASE 7                                       *
      * Overloaded operators: operator+=, operator*=       *
      *                   and operator-=                   *
-     ******************************************************
+     ******************************************************/
     std::cout << "\nTEST PHASE 7: operator+=, operator*=, operator-=\n";
 
     {
@@ -205,10 +194,12 @@ int main() {
         Set S1{A1};
         Set S2{A2};
 
-        S1 += S2;
+        std::cout<<(S1 += S2);
+        std::cout << Set::get_count_nodes() << std::endl;
         assert(Set::get_count_nodes() == 13);
 
         S2 *= S2;
+        std::cout << Set::get_count_nodes() << std::endl;
         assert(Set::get_count_nodes() == 13);
 
         // Test
@@ -216,6 +207,7 @@ int main() {
         assert(S1 == Set{A3});
         assert(S2 == S2);
 
+        
         S1 -= S1;
         assert(S1 == Set{});
 
@@ -228,7 +220,7 @@ int main() {
      * TEST PHASE 8                                       *
      * Overloaded operators: union, intersection, and     *
      * and difference                                     *
-     ******************************************************
+     ******************************************************/
     std::cout << "\nTEST PHASE 8: union, intersection, and difference\n";
 
     {
@@ -240,15 +232,16 @@ int main() {
         Set S3{};
 
         S3 = S1 + S2;
+        
         assert(Set::get_count_nodes() == 19);
-
+        
         // test
         std::vector<int> A3{1, 2, 3, 5, 7, 8};
         assert(S3 == Set{A3});
-
+        
         S3 = S1 * S2;
         assert(Set::get_count_nodes() == 14);
-
+        std::cout << "här är vi" << std::endl;
         // test
         std::vector<int> A4{3};
         assert(S3 == Set{A4});
