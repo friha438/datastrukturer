@@ -101,7 +101,9 @@ public:
         if (isEmpty()) {
             out << "Empty tree";
         } else {
-            inorder(root, out);
+            //inorder(root, out);
+            int indent = 0;
+            preorder(root, out, indent);
         }
     }
 
@@ -134,6 +136,13 @@ public:
         return Node::count_nodes;
     }
 
+    /*
+    std::pair< Comparable, Comparable> find_pred_succ(const Comparable& x) const {
+        Node* t = new Node{ x, nullptr, nullptr };
+        Node* h = new Node{ x, nullptr, nullptr };
+        return std::pair < t, h>;
+    }*/
+
 private:
     Node *root;
 
@@ -145,7 +154,7 @@ private:
      */
     Node *insert(const Comparable &x, Node *t) {
         if (t == nullptr) {
-            t = new Node{x, nullptr, nullptr};
+            t = new Node{x, nullptr, nullptr, t}; //the last ptr should point to parent, is that t?
         } else if (x < t->element) {
             t->left = insert(x, t->left);
         } else if (t->element < x) {
@@ -179,7 +188,8 @@ private:
             t->right = remove(t->element, t->right);
         } else {
             Node *oldNode = t;
-            t = (t->left != nullptr) ? t->left : t->right;
+            t = (t->left != nullptr) ? t->left : t->right; t->parent; 
+            // what is "?", t->parent added, why is a ; needen instead of :?
             delete oldNode;
         }
 
@@ -274,6 +284,24 @@ private:
             inorder(t->right, out);
         }
     }
+    //en kommentar
+    /**
+    * Private member function to print a subtree rooted at t in sorted order.
+    * Pre-order traversal is used
+    * recently implemented
+    */
+    
+    void preorder(Node *t, ostream& out, int indent = 0) const {
+        
+        if (t != nullptr) {  
+            out << setw(indent) << t->element << '\n';
+            //out << "-";
+            preorder(t->left, out, indent+3);
+            //out << "-";
+            preorder(t->right, out, indent+3);
+           // out << '\t';
+        }
+    }
 
     /**
      * Private member function to clone subtree.
@@ -282,7 +310,7 @@ private:
         if (t == nullptr) {
             return nullptr;
         } else {
-            return new Node{t->element, clone(t->left), clone(t->right)};
+            return new Node{t->element, clone(t->left), clone(t->right)}; //added clone(t->parent)  , clone(t->parent)
         }
     }
 };
