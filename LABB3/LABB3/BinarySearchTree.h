@@ -30,6 +30,8 @@ private:
     struct Node;  // nested class defined in node.h
 
 public:
+    class Iterator;
+
     BinarySearchTree() : root{nullptr} {
     }
 
@@ -136,12 +138,69 @@ public:
         return Node::count_nodes;
     }
 
-    /*
+    Comparable get_parent(Comparable x) const {
+        Node* p = contains(x, root);
+        //std::cout << p->parent->element << std::endl;
+        if (p == nullptr) {
+            //create a comparable??
+            return Comparable{ };
+        }
+        else {
+            if (p->parent == nullptr) {
+                return Comparable{}; 
+            }
+
+            return p->parent->element;
+        }
+    }
+
+    //Node* find(const Comparable& x, Node* t) const {
+    //    if (isEmpty()) {
+    //        throw UnderflowException{};
+    //    }
+    //    if (t == nullptr) {
+    //        return t;
+    //    }
+    //    else if (x < t->element) {
+    //        return contains(x, t->left);
+    //    }
+    //    else if (t->element < x) {
+    //        return contains(x, t->right);
+    //    }
+    //    else {
+    //        return t;  // Match
+    //    }
+    //}
+
+    //Node*& find(const Comparable& element) const {
+    //    if (isEmpty()) {
+    //        throw UnderflowException{};
+    //    }
+    //    Node* t = root;
+    //    while (element != t->element)
+    //    {
+    //        if (element < t->element) {
+    //            t = t->left;
+    //        }
+    //        else if (t->element < element) {
+    //            t = t->right;
+    //        }
+    //    }
+    //    return t;
+    //}
+
+
+    
     std::pair< Comparable, Comparable> find_pred_succ(const Comparable& x) const {
-        Node* t = new Node{ x, nullptr, nullptr };
-        Node* h = new Node{ x, nullptr, nullptr };
-        return std::pair < t, h>;
-    }*/
+        
+        Comparable succ;
+        Comparable pred;
+
+        {pred, succ} = find_pred_succ(x, root);
+              
+        
+        return { pred, succ };
+    }
 
 private:
     Node *root;
@@ -154,11 +213,16 @@ private:
      */
     Node *insert(const Comparable &x, Node *t) {
         if (t == nullptr) {
-            t = new Node{x, nullptr, nullptr, t}; //the last ptr should point to parent, is that t?
-        } else if (x < t->element) {
-            t->left = insert(x, t->left);
+            t = new Node{ x, nullptr, nullptr, nullptr};
+        }
+         else if (x < t->element) {
+            Node* lchild = insert(x, t->left);
+            t->left = lchild;
+            lchild->parent = t;
         } else if (t->element < x) {
-            t->right = insert(x, t->right);
+            Node* rchild = insert(x, t->right);
+            t->right = rchild;
+            rchild->parent = t;
         } else {
             ;  // Duplicate; do nothing
         }
@@ -186,10 +250,13 @@ private:
         {
             t->element = findMin(t->right)->element;
             t->right = remove(t->element, t->right);
-        } else {
+        } 
+        else {
             Node *oldNode = t;
-            t = (t->left != nullptr) ? t->left : t->right; t->parent; 
-            // what is "?", t->parent added, why is a ; needen instead of :?
+            t = (t->left != nullptr) ? t->left : t->right;
+            if (t != nullptr) {
+                t->parent = oldNode->parent;
+            }
             delete oldNode;
         }
 
@@ -284,22 +351,19 @@ private:
             inorder(t->right, out);
         }
     }
-    //en kommentar
+
     /**
     * Private member function to print a subtree rooted at t in sorted order.
     * Pre-order traversal is used
     * recently implemented
     */
     
-    void preorder(Node *t, ostream& out, int indent = 0) const {
+    void preorder(Node *t, ostream& out, int indent) const {
         
         if (t != nullptr) {  
             out << setw(indent) << t->element << '\n';
-            //out << "-";
             preorder(t->left, out, indent+3);
-            //out << "-";
             preorder(t->right, out, indent+3);
-           // out << '\t';
         }
     }
 
@@ -310,10 +374,65 @@ private:
         if (t == nullptr) {
             return nullptr;
         } else {
-            return new Node{t->element, clone(t->left), clone(t->right)}; //added clone(t->parent)  , clone(t->parent)
+            return new Node{t->element, clone(t->left), clone(t->right), t->parent }; //added clone(t->parent)  
         }
     }
+
+    std::pair< Comparable, Comparable> find_pred_succ(const Comparable& x, Node* t) const {
+
+        Comparable pred;
+        Comparable succ;
+
+        /*if (t->element == x) {
+            pred = t->left->element;
+            succ = t->right->element;
+        }*/
+        if (x < t->element) {
+            succ = t->element;
+            t = t->left;    
+            find_pred_succ(x, t);
+        }
+        else if (x > t->element) {
+            pred = t->element;
+            t = t->right;
+            find_pred_succ(x, t);
+        }
+        else if (x == t->element && t->left != nullptr && t->right != nullptr) {
+            pred = t->left->element;
+            succ = t->right->element;
+        }
+
+        //vi har inte tänkt den här tanken till slut
+
+        return { pred, succ };
+    }
+
+    
 };
 
 //Include the definition of class Node
 #include "node.h"
+
+        /*
+        if (x < root->element) {
+            Node* succ = n->parent;
+            if (t != nullptr && t->right != nullptr) {
+                succ = findMin(t->right);
+            }
+            while (succ != nullptr && n == succ->right)
+            {
+                n = succ;
+                succ = succ->parent;
+            }
+        }
+        else if ( x > root->element ) {
+            Node* pred = n->parent;
+            if (t != nullptr && t->left != nullptr) {
+                pred = findMax(t->left);
+            }
+            while (pred != nullptr && n == pred->left)
+            {
+                n = pred;
+                pred = pred->parent;
+            }
+        }*/
