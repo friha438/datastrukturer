@@ -193,13 +193,7 @@ public:
     
     std::pair< Comparable, Comparable> find_pred_succ(const Comparable& x) const {
         
-        Comparable succ;
-        Comparable pred;
-
-        {pred, succ} = find_pred_succ(x, root);
-              
-        
-        return { pred, succ };
+        return find_pred_succ(x, root);
     }
 
 private:
@@ -397,9 +391,23 @@ private:
             t = t->right;
             find_pred_succ(x, t);
         }
-        else if (x == t->element && t->left != nullptr && t->right != nullptr) {
-            pred = t->left->element;
-            succ = t->right->element;
+        else if (x == t->element) {
+
+            if (t->left != nullptr && t->right != nullptr) {
+                pred = t->left->element;
+                succ = t->right->element;
+            }
+
+            else if (t->right != nullptr) {
+                succ = t->right->element;
+            }
+            else if (t->left != nullptr){
+                pred = t->left->element;
+            }
+            else  {
+                ; //do nothing all is well
+            }
+
         }
 
         //vi har inte tänkt den här tanken till slut
