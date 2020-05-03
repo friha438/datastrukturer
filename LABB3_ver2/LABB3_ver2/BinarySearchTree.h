@@ -88,6 +88,12 @@ public:
         return (contains(x, root) != nullptr);
     }
 
+    //Iterator contains(const Comparable& x) const {
+    //    if (isEmpty()) return end();
+
+    //    return Iterator(contains(x, root));
+    //}
+
     /**
      * Test if the tree is logically empty.
      * Return true if empty, false otherwise.
@@ -191,15 +197,30 @@ public:
 
 
     
-    std::pair< Comparable, Comparable> find_pred_succ(const Comparable& x) const {
+    std::pair<Comparable, Comparable> find_pred_succ(const Comparable& x) const {
         
         if (isEmpty()) {
             throw UnderflowException{};
         }
-        //std::pair <Comparble, Comparble> = { pred, succ };
+        std::pair< Comparable, Comparable> predsucc;
+        predsucc.first = x;
+        predsucc.second = x;
 
-        return find_pred_succ(x, root);
+        return find_pred_succ(predsucc, x, root);
     }
+
+    Iterator begin() const
+    {
+        if (isEmpty()) return end();
+
+        return Iterator(findMin(root));
+    }
+
+    Iterator end() const
+    {
+        return Iterator(nullptr);
+    }
+
 
 private:
     Node *root;
@@ -310,6 +331,8 @@ private:
             return t;  // Match
         }
     }
+
+
     /****** NONRECURSIVE VERSION*************************
     Node *contains(const Comparable &x, Node *t) const {
         while (t != nullptr) {
@@ -377,42 +400,35 @@ private:
         }
     }
 
-    std::pair< Comparable, Comparable> find_pred_succ(const Comparable& x, Node* t) const {
+    std::pair<Comparable, Comparable> find_pred_succ(std::pair<Comparable, Comparable> &predsucc, const Comparable& x, Node* t) const {
 
-        std::pair< Comparable, Comparable> predsucc;
+        //std::cout << "pred" << predsucc.first << std::endl;
+        //std::cout << "succ" << predsucc.second << std::endl;
+
+        if (t == nullptr) return predsucc;
 
         if (x < t->element) {
             predsucc.second = t->element;
             t = t->left;    
-            predsucc = find_pred_succ(x, t);
-            std::cout << "succ" << predsucc.second << std::endl;
+            predsucc = find_pred_succ(predsucc, x, t);
+           // std::cout << "succ" << predsucc.second << std::endl;
         }
         else if (x > t->element) {
             predsucc.first = t->element;
             t = t->right;
+            //std::cout << "pred" << predsucc.first << std::endl;
+            predsucc = find_pred_succ(predsucc, x, t);
             
-            predsucc = find_pred_succ(x, t);
-            std::cout << "pred" << predsucc.first << std::endl;
         }
-        else { // (x == t->element) 
-            /*
-            if (t->left != nullptr && t->right != nullptr) {
-                predsucc.first = t->left->element;
-                predsucc.second = t->right->element;
-                //std::cout << "succ" << succ << std::endl;
-                std::cout << predsucc.first << " " << predsucc.second << std::endl;
-            }
-            */
+        else if (x == t->element) { // (x == t->element) 
 
             if (t->right != nullptr) {
                 predsucc.second = findMin(t->right)->element;
-                //std::cout << "succ" << succ << std::endl;
-                std::cout << predsucc.first << " " << predsucc.second << std::endl;
+                //std::cout << "right not null " << predsucc.first << " " << predsucc.second << std::endl;
             }
             else if (t->left != nullptr){
                 predsucc.first = findMax(t->left)->element;
-                //std::cout << "pred" << pred << std::endl;
-                std::cout << predsucc.first << " " << predsucc.second << std::endl;
+                //std::cout << "left not null " << predsucc.first << " " << predsucc.second << std::endl;
             }
             else  {
                 ; //do nothing, all is well
@@ -420,9 +436,6 @@ private:
 
         }
 
-       // std::cout << predsucc.first << " " << predsucc.second << std::endl;
-        //vi har inte tänkt den här tanken till slut
-        //std::cout << "pred"  << std::endl;
         
         return predsucc;
     }
@@ -456,3 +469,11 @@ private:
                 pred = pred->parent;
             }
         }*/
+
+
+
+
+
+/*Questions for Aida:
+    - predsucc i BST: why doesnt it work??
+    - Why doesnt our first assert in test3 even run?*/
