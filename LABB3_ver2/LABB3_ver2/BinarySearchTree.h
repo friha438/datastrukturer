@@ -84,15 +84,15 @@ public:
     /**
      * Returns true if x is found in the tree.
      */
-    bool contains(const Comparable &x) const {
-        return (contains(x, root) != nullptr);
-    }
-
-    //Iterator contains(const Comparable& x) const {
-    //    if (isEmpty()) return end();
-
-    //    return Iterator(contains(x, root));
+    //bool contains(const Comparable &x) const {
+    //    return (contains(x, root) != nullptr);
     //}
+
+    Iterator contains(const Comparable& x) const {
+        
+        if (contains(x, root) != nullptr) return Iterator(contains(x, root));
+        else return Iterator(end());
+    }
 
     /**
      * Test if the tree is logically empty.
@@ -159,41 +159,6 @@ public:
             return p->parent->element;
         }
     }
-
-    //Node* find(const Comparable& x, Node* t) const {
-    //    if (isEmpty()) {
-    //        throw UnderflowException{};
-    //    }
-    //    if (t == nullptr) {
-    //        return t;
-    //    }
-    //    else if (x < t->element) {
-    //        return contains(x, t->left);
-    //    }
-    //    else if (t->element < x) {
-    //        return contains(x, t->right);
-    //    }
-    //    else {
-    //        return t;  // Match
-    //    }
-    //}
-
-    //Node*& find(const Comparable& element) const {
-    //    if (isEmpty()) {
-    //        throw UnderflowException{};
-    //    }
-    //    Node* t = root;
-    //    while (element != t->element)
-    //    {
-    //        if (element < t->element) {
-    //            t = t->left;
-    //        }
-    //        else if (t->element < element) {
-    //            t = t->right;
-    //        }
-    //    }
-    //    return t;
-    //}
 
 
     
@@ -445,6 +410,7 @@ private:
 
 //Include the definition of class Node
 #include "node.h"
+#include "iterator.h"
 
         /*
         if (x < root->element) {
@@ -475,5 +441,5 @@ private:
 
 
 /*Questions for Aida:
-    - predsucc i BST: why doesnt it work??
-    - Why doesnt our first assert in test3 even run?*/
+    - Why doesnt our first assert in test3 even run?
+    - We think it is something wrong with constructors/destructors because the error says that */
