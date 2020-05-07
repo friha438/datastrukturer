@@ -1,6 +1,11 @@
-#include "BinarySearchTree.h"
+/*  Moa Gutenwik, moagu002
+    Frida Hartman, friha438 */
 
 #pragma once
+#include <cassert>  //assert
+//#include "BinarySearchTree.h"
+
+
 
 // Define a node of the tree
 template <typename Comparable>

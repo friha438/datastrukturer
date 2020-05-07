@@ -1,3 +1,6 @@
+/*  Moa Gutenwik, moagu002
+    Frida Hartman, friha438 */
+
 #include <iostream>
 #include <iomanip>  //setw
 #include <utility>  //std::move
@@ -5,6 +8,7 @@
 #pragma once
 
 #include "dsexceptions.h"
+#include "FrequencyTable.h"
 
 using namespace std;
 
@@ -83,7 +87,10 @@ public:
 
     /**
      * Returns true if x is found in the tree.
+     Use the first contains in test 1 and then the 
+     second contains in test 2, 3 and Frequency table
      */
+
     //bool contains(const Comparable &x) const {
     //    return (contains(x, root) != nullptr);
     //}
@@ -144,23 +151,24 @@ public:
         return Node::count_nodes;
     }
 
+    /*Finds the Node with the element x and 
+    returns the element of the Node's parent*/
+
     Comparable get_parent(Comparable x) const {
         Node* p = contains(x, root);
-        //std::cout << p->parent->element << std::endl;
         if (p == nullptr) {
-            //create a comparable??
             return Comparable{ };
         }
         else {
             if (p->parent == nullptr) {
                 return Comparable{}; 
             }
-
             return p->parent->element;
         }
     }
 
-
+    /*Finds the predecessor and the successor of the element x
+    and returns them as a pair (pred, succ)*/
     
     std::pair<Comparable, Comparable> find_pred_succ(const Comparable& x) const {
         
@@ -174,12 +182,17 @@ public:
         return find_pred_succ(predsucc, x, root);
     }
 
+    /*Finds the smallest element in the tree and returns 
+    an iterator of that Node*/
+
     Iterator begin() const
     {
         if (isEmpty()) return end();
 
         return Iterator(findMin(root));
     }
+
+    /*Returns the end of the tree, which is a nullptr*/
 
     Iterator end() const
     {
@@ -323,7 +336,6 @@ private:
             makeEmpty(t->right);
             delete t;
         }
-
         return nullptr;
     }
 
@@ -345,8 +357,7 @@ private:
     * recently implemented
     */
     
-    void preorder(Node *t, ostream& out, int indent) const {
-        
+    void preorder(Node *t, ostream& out, int indent) const {    
         if (t != nullptr) {  
             out << setw(indent) << t->element << '\n';
             preorder(t->left, out, indent+3);
@@ -365,10 +376,9 @@ private:
         }
     }
 
-    std::pair<Comparable, Comparable> find_pred_succ(std::pair<Comparable, Comparable> &predsucc, const Comparable& x, Node* t) const {
+    /*Private member function to find predecessor and successor of an element*/
 
-        //std::cout << "pred" << predsucc.first << std::endl;
-        //std::cout << "succ" << predsucc.second << std::endl;
+    std::pair<Comparable, Comparable> find_pred_succ(std::pair<Comparable, Comparable> &predsucc, const Comparable& x, Node* t) const {
 
         if (t == nullptr) return predsucc;
 
@@ -376,70 +386,74 @@ private:
             predsucc.second = t->element;
             t = t->left;    
             predsucc = find_pred_succ(predsucc, x, t);
-           // std::cout << "succ" << predsucc.second << std::endl;
         }
         else if (x > t->element) {
             predsucc.first = t->element;
             t = t->right;
-            //std::cout << "pred" << predsucc.first << std::endl;
             predsucc = find_pred_succ(predsucc, x, t);
             
         }
-        else if (x == t->element) { // (x == t->element) 
+        else if (x == t->element) {
 
             if (t->right != nullptr) {
                 predsucc.second = findMin(t->right)->element;
-                //std::cout << "right not null " << predsucc.first << " " << predsucc.second << std::endl;
             }
             else if (t->left != nullptr){
                 predsucc.first = findMax(t->left)->element;
-                //std::cout << "left not null " << predsucc.first << " " << predsucc.second << std::endl;
             }
             else  {
                 ; //do nothing, all is well
             }
-
-        }
-
-        
+        }       
         return predsucc;
     }
 
+    /*Private member function to find successor of a node.
+    Is called from file iterator.h*/
+
+    Node* find_successor(Node* t) {
+        if (t != nullptr && t->right != nullptr) { //if the node has a left subtree
+            return findMin(t->right);
+        }
+        else if (t == nullptr) {
+            return nullptr;
+        }
+        Node* temp = t->parent;
+        while (temp != nullptr) //climb up until child is left child of parent
+        {               
+            if (temp->element > t->element) {
+              return temp;
+            }
+            temp = temp->parent;
+        }
+        return nullptr; //change to nullptr if strings
+    }
+
+    /*Private member function to find successor of a node.
+    Is called from file iterator.h*/
+
+    Node* find_predecessor(Node* t) {
+        if (t != nullptr && t->left != nullptr) { //if the node has a left subtree
+            return findMax(t->left);
+        }
+        else if (t == nullptr)
+        {
+            return nullptr;
+        }
+        Node* temp = t->parent; 
+        while (temp != nullptr) //climb up until child is right child of parent
+        {
+            if (temp->element < t->element) {
+                return temp;
+            }
+            temp = temp->parent;
+        }
+        return nullptr; 
+    }
     
 };
 
 //Include the definition of class Node
 #include "node.h"
 #include "iterator.h"
-
-        /*
-        if (x < root->element) {
-            Node* succ = n->parent;
-            if (t != nullptr && t->right != nullptr) {
-                succ = findMin(t->right);
-            }
-            while (succ != nullptr && n == succ->right)
-            {
-                n = succ;
-                succ = succ->parent;
-            }
-        }
-        else if ( x > root->element ) {
-            Node* pred = n->parent;
-            if (t != nullptr && t->left != nullptr) {
-                pred = findMax(t->left);
-            }
-            while (pred != nullptr && n == pred->left)
-            {
-                n = pred;
-                pred = pred->parent;
-            }
-        }*/
-
-
-
-
-
-/*Questions for Aida:
-    - Why doesnt our first assert in test3 even run?
-    - We think it is something wrong with constructors/destructors because the error says that */
+#include "FrequencyTable.h"
