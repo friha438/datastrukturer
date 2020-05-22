@@ -15,8 +15,7 @@
 #include "digraph.h"
 #include "queue.h"
 
-//const int INF = std::numeric_limits<std::size_t>::max();
-const int INF = 99999;
+const long long int INF = std::numeric_limits<int>::max();
 
 // Note: graph vertices are numbered from 1 -- i.e. there is no vertex zero
 
@@ -61,7 +60,6 @@ void Digraph::removeEdge(int u, int v) {
 }
 
 // unweighted single source shortest paths
-// *** TODO ***
 void Digraph::uwsssp(int s) const {
     if (s < 1 || s > size) {
         std::cout << "\nERROR: expected source s in range 1.." << size << " !\n";
@@ -90,7 +88,7 @@ void Digraph::uwsssp(int s) const {
                 path[temp->vertex] = v;
                 Q.enqueue(temp->vertex);
             }
-            temp = temp->next;
+            temp = table[v].getNext();
         }
     }    
 }
@@ -113,7 +111,6 @@ int Digraph::find_smallest_undone_distance_vertex() const
 
 // positive weighted single source shortest paths
 // Dijktra’s algorithm
-// *** TODO ***
 void Digraph::pwsssp(int s) const {
     if (s < 1 || s > size) {
         cout << "\nERROR: expected source s in range 1.." << size << " !\n";
@@ -182,7 +179,6 @@ void Digraph::printTree() const {
 }
 
 // print shortest path from s to t
-// *** TODO ***
 void Digraph::printPath(int t) const {
     if (t < 1 || t > size) {
         std::cout << "\nERROR: expected target t in range 1.." << size << " !\n";

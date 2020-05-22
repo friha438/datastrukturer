@@ -2,6 +2,8 @@
  * file:	~\tnd004\lab\lab4a\digraph.h         *
  * remark: interface for directed graphs      *
  **********************************************/
+ /*  Frida Hartman, friha438
+     Moa Gutenwik, moagu002 */
 
 #pragma once
 
